@@ -66,8 +66,8 @@ Permite administrar reservas, mesas, platos y usuarios desde un panel de control
 ### 1. Clonar o descargar el proyecto
 
 ```bash
-git clone https://github.com/tuusuario/restaurantphpmvc.git
-cd restaurantphpmvc
+git clone https://github.com/MartiEUG/Restuarante-FoodPorn-Caf-.git
+cd Restuarante-FoodPorn-Caf-
 ```
 
 ### 2. (Opcional) Configurar variables de entorno
