@@ -1,0 +1,30 @@
+# Logs
+logs/*.log
+*.log
+
+# Environment variables
+.env.local
+.env.production
+
+# Docker volumes
+mysql_data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Composer (if used in future)
+vendor/
+composer.lock

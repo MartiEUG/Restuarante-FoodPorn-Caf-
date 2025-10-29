@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # Servicio PHP con Apache
+  php-apache:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: restaurant_php
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/var/www/html/public
+      - ./src:/var/www/html/src
+      - ./logs:/var/www/html/logs
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=${DB_NAME:-restaurant_db}
+      - DB_USER=${DB_USER:-restaurant_user}
+      - DB_PASSWORD=${DB_PASSWORD:-restaurant_pass123}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - restaurant_network
+    restart: unless-stopped
+
+  # Servicio MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: restaurant_mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password_123}
+      MYSQL_DATABASE: ${DB_NAME:-restaurant_db}
+      MYSQL_USER: ${DB_USER:-restaurant_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-restaurant_pass123}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+    networks:
+      - restaurant_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root_password_123}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Servicio phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: restaurant_phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password_123}
+    depends_on:
+      - mysql
+    networks:
+      - restaurant_network
+    restart: unless-stopped
+
+networks:
+  restaurant_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
