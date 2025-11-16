@@ -8,7 +8,7 @@ include SRC_PATH . '/views/layout/header.php';
     
     <div class="actions-bar">
         <a href="<?php echo APP_URL; ?>/admin" class="btn btn-secondary">← Volver al Panel</a>
-        <span style="color: var(--text-secondary); font-weight: 600;">Total de mesas: <?php echo $totalMesas; ?></span>
+        <span style="color: var(--text-secondary); font-weight: 600;">Total de mesas activas: <?php echo $totalMesas; ?></span>
     </div>
     
     <!-- Formulario de crear mesa -->
@@ -221,7 +221,7 @@ function juntarMesasSeleccionadas() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Mesas juntadas exitosamente');
+            alert(`Mesas juntadas exitosamente. Nueva capacidad total: ${data.nueva_capacidad} personas`);
             location.reload();
         } else {
             alert('Error al juntar las mesas: ' + (data.message || 'Error desconocido'));

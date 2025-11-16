@@ -19,6 +19,7 @@ include SRC_PATH . '/views/layout/header.php';
                     <th>Email</th>
                     <th>Rol</th>
                     <th>Fecha de Registro</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,6 +34,15 @@ include SRC_PATH . '/views/layout/header.php';
                             </span>
                         </td>
                         <td><?php echo formatearFecha($usuario['fecha_registro']); ?></td>
+                        <!-- Added action buttons for editing and deleting users -->
+                        <td>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <a href="<?php echo APP_URL; ?>/admin/usuarios/editar/<?php echo $usuario['id']; ?>" class="btn btn-primary btn-small">Editar</a>
+                                <?php if ($usuario['id'] != $_SESSION['usuario_id']): ?>
+                                    <a href="<?php echo APP_URL; ?>/admin/usuarios/eliminar/<?php echo $usuario['id']; ?>" class="btn btn-danger btn-small" onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">Eliminar</a>
+                                <?php endif; ?>
+                            </div>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

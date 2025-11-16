@@ -85,4 +85,75 @@ class Usuario {
         $result = $stmt->fetch();
         return $result['total'];
     }
+    
+    
+    /**
+     * Actualizar usuario
+     */
+    public function actualizar($id, $nombre, $email, $rol) {
+        try {
+            $sql = "UPDATE usuarios SET nombre = :nombre, email = :email, rol = :rol WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            
+            return $stmt->execute([
+                ':id' => $id,
+                ':nombre' => $nombre,
+                ':email' => $email,
+                ':rol' => $rol
+            ]);
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Actualizar contraseña de usuario
+     */
+    public function actualizarContrasena($id, $contrasena) {
+        try {
+            $contrasenaHash = password_hash($contrasena, PASSWORD_DEFAULT);
+            $sql = "UPDATE usuarios SET contrasena_hash = :contrasena_hash WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            
+            return $stmt->execute([
+                ':id' => $id,
+                ':contrasena_hash' => $contrasenaHash
+            ]);
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Eliminar usuario
+     */
+    public function eliminar($id) {
+        try {
+            $sql = "DELETE FROM usuarios WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([':id' => $id]);
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Verificar si email ya existe (excepto para el usuario actual)
+     */
+    public function emailExiste($email, $id = null) {
+        $sql = "SELECT COUNT(*) as total FROM usuarios WHERE email = :email";
+        if ($id) {
+            $sql .= " AND id != :id";
+        }
+        
+        $stmt = $this->db->prepare($sql);
+        $params = [':email' => $email];
+        if ($id) {
+            $params[':id'] = $id;
+        }
+        
+        $stmt->execute($params);
+        $result = $stmt->fetch();
+        return $result['total'] > 0;
+    }
 }

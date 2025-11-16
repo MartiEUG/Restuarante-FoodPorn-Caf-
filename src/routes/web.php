@@ -182,6 +182,24 @@ function handleRoute($uri) {
         return;
     }
     
+    if (preg_match('/^\/admin\/usuarios\/editar\/(\d+)$/', $uri, $matches)) {
+        $controller = new AdminController();
+        $controller->mostrarEditarUsuario($matches[1]);
+        return;
+    }
+    
+    if (preg_match('/^\/admin\/usuarios\/actualizar\/(\d+)$/', $uri, $matches)) {
+        $controller = new AdminController();
+        $controller->actualizarUsuario($matches[1]);
+        return;
+    }
+    
+    if (preg_match('/^\/admin\/usuarios\/eliminar\/(\d+)$/', $uri, $matches)) {
+        $controller = new AdminController();
+        $controller->eliminarUsuario($matches[1]);
+        return;
+    }
+    
     if ($uri === '/admin/mesas') {
         $controller = new MesaController();
         $controller->gestionMesas();

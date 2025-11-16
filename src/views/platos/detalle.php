@@ -6,6 +6,14 @@ include SRC_PATH . '/views/layout/header.php';
 <div class="container">
     <div class="dish-detail">
         <div class="dish-detail-image">
+            <!-- Added actual image display with fallback -->
+            <?php if ($plato['imagen']): ?>
+                <img src="<?php echo htmlspecialchars($plato['imagen'], ENT_QUOTES, 'UTF-8'); ?>" 
+                     alt="<?php echo htmlspecialchars($plato['nombre'], ENT_QUOTES, 'UTF-8'); ?>"
+                     style="width: 100%; height: 100%; object-fit: cover;">
+            <?php else: ?>
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); font-size: 5rem; opacity: 0.2;">🍽️</div>
+            <?php endif; ?>
             <span class="dish-category"><?php echo htmlspecialchars($plato['categoria']); ?></span>
         </div>
         <div class="dish-detail-info">

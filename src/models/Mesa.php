@@ -177,6 +177,8 @@ class Mesa {
                 throw new Exception('Capacidad total inválida');
             }
             
+            error_log("[v0] Total capacity being set: " . $capacidadTotal);
+            
             $sql = "UPDATE mesas SET capacidad = ?, es_agrupada = TRUE WHERE id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$capacidadTotal, $primeraMesa['id']]);

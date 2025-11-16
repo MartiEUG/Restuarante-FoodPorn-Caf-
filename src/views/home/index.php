@@ -47,6 +47,14 @@ include SRC_PATH . '/views/layout/header.php';
                     <?php foreach ($platosPorCategoria[$categoria] as $plato): ?>
                         <div class="dish-card-modern">
                             <div class="dish-image-modern">
+                                <!-- Added actual image rendering with fallback -->
+                                <?php if ($plato['imagen']): ?>
+                                    <img src="<?php echo htmlspecialchars($plato['imagen'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                         alt="<?php echo htmlspecialchars($plato['nombre'], ENT_QUOTES, 'UTF-8'); ?>"
+                                         style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+                                <?php else: ?>
+                                    <span style="font-size: 5rem; opacity: 0.2;">🍽️</span>
+                                <?php endif; ?>
                                 <span class="dish-category-badge"><?php echo htmlspecialchars($plato['categoria'], ENT_QUOTES, 'UTF-8'); ?></span>
                             </div>
                             <div class="dish-content">

@@ -256,7 +256,12 @@ class MesaController {
             $resultado = $this->mesaModel->juntarMesas($mesasIds);
             
             if ($resultado) {
-                echo json_encode(['success' => true, 'mesa_id' => $resultado]);
+                $mesaMerged = $this->mesaModel->obtenerPorId($resultado);
+                echo json_encode([
+                    'success' => true, 
+                    'mesa_id' => $resultado,
+                    'nueva_capacidad' => $mesaMerged['capacidad']
+                ]);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Error desconocido al juntar las mesas']);
             }

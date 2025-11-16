@@ -44,10 +44,17 @@ include SRC_PATH . '/views/layout/header.php';
             <?php foreach ($platos as $plato): ?>
                 <div class="dish-card" style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s;">
                     <div class="dish-image" style="height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; display: flex; align-items: center; justify-content: center;">
-                        <span class="dish-category" style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.95); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: #667eea;">
+                        <!-- Added image display with proper fallback -->
+                        <?php if ($plato['imagen']): ?>
+                            <img src="<?php echo htmlspecialchars($plato['imagen'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                 alt="<?php echo htmlspecialchars($plato['nombre'], ENT_QUOTES, 'UTF-8'); ?>"
+                                 style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+                        <?php else: ?>
+                            <span style="font-size: 3rem; color: rgba(255,255,255,0.3); position: relative;">🍽️</span>
+                        <?php endif; ?>
+                        <span class="dish-category" style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.95); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: #667eea; z-index: 10;">
                             <?php echo htmlspecialchars($plato['categoria']); ?>
                         </span>
-                        <span style="font-size: 3rem; color: rgba(255,255,255,0.3);">🍽️</span>
                     </div>
                     <div class="dish-info" style="padding: 20px;">
                         <h3 style="font-size: 1.3rem; color: #2c3e50; margin-bottom: 10px; font-weight: 600;">
