@@ -23,11 +23,6 @@ include SRC_PATH . '/views/layout/header.php';
         
         <p class="auth-link">¿No tienes cuenta? <a href="<?php echo APP_URL; ?>/registro">Regístrate aquí</a></p>
         
-        <div class="demo-credentials">
-            <h4>Credenciales de prueba:</h4>
-            <p><strong>Usuario:</strong> usuario@restaurant.com / user123</p>
-            <p><strong>Admin:</strong> admin@restaurant.com / admin123</p>
-        </div>
     </div>
 </div>
 

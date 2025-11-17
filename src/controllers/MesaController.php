@@ -107,6 +107,29 @@ class MesaController {
             return;
         }
         
+        $reservaModel = new Reserva();
+        $reserva = $reservaModel->obtenerPorId($reservaId);
+        
+        if (!$reserva) {
+            echo json_encode(['success' => false, 'message' => 'Reserva no encontrada']);
+            return;
+        }
+        
+        $mesa = $this->mesaModel->obtenerPorId($mesaId);
+        
+        if (!$mesa) {
+            echo json_encode(['success' => false, 'message' => 'Mesa no encontrada']);
+            return;
+        }
+        
+        if ((int)$mesa['capacidad'] < (int)$reserva['num_personas']) {
+            echo json_encode([
+                'success' => false, 
+                'message' => "La mesa {$mesa['numero']} tiene capacidad para {$mesa['capacidad']} personas, pero la reserva es para {$reserva['num_personas']} personas. Capacidad insuficiente."
+            ]);
+            return;
+        }
+        
         // Asignar la mesa a la reserva
         $resultado = $this->mesaModel->asignarAReserva($reservaId, [$mesaId]);
         

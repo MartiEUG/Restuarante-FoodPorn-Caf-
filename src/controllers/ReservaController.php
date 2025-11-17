@@ -63,7 +63,12 @@ class ReservaController {
         
         $mesasNecesarias = $this->mesaModel->calcularMesasNecesarias($numPersonas, $fecha, $hora);
         if (empty($mesasNecesarias)) {
-            $errores[] = 'No hay mesas disponibles para esa fecha y hora';
+            $errores[] = "No hay mesas disponibles con capacidad suficiente para $numPersonas personas en esa fecha y hora";
+        } else {
+            $validacion = $this->mesaModel->validarCapacidadMesas($mesasNecesarias, $numPersonas);
+            if (!$validacion['valido']) {
+                $errores[] = $validacion['mensaje'];
+            }
         }
         
         if (!empty($errores)) {

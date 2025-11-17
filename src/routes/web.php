@@ -194,6 +194,12 @@ function handleRoute($uri) {
         return;
     }
     
+    if (preg_match('/^\/admin\/usuarios\/cambiar-rol\/(\d+)$/', $uri, $matches)) {
+        $controller = new AdminController();
+        $controller->cambiarRolUsuario($matches[1]);
+        return;
+    }
+    
     if (preg_match('/^\/admin\/usuarios\/eliminar\/(\d+)$/', $uri, $matches)) {
         $controller = new AdminController();
         $controller->eliminarUsuario($matches[1]);

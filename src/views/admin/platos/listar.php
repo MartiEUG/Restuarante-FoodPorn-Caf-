@@ -9,6 +9,11 @@ include SRC_PATH . '/views/layout/header.php';
     <div class="actions-bar">
         <a href="<?php echo APP_URL; ?>/admin" class="btn btn-secondary">Volver al Panel</a>
         <a href="<?php echo APP_URL; ?>/admin/platos/crear" class="btn btn-primary">Crear Nuevo Plato</a>
+
+        <!-- NUEVO BOTÓN PARA ENVIAR NUEVOS PLATOS -->
+        <a href="<?php echo APP_URL; ?>/admin/platos/enviar-nuevos" class="btn btn-warning">
+            Enviar Nuevos Platos por Correo
+        </a>
     </div>
     
     <div class="table-responsive">

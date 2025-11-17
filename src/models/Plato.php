@@ -87,12 +87,22 @@ class Plato {
      * Buscar platos por palabra clave
      */
     public function buscar($keyword) {
-        $sql = "SELECT * FROM platos WHERE activo = TRUE AND (nombre LIKE :keyword OR descripcion LIKE :keyword) 
-                ORDER BY nombre";
-        $stmt = $this->db->prepare($sql);
-        $keyword = "%$keyword%";
-        $stmt->execute([':keyword' => $keyword]);
-        return $stmt->fetchAll();
+        try {
+            $sql = "SELECT * FROM platos 
+                    WHERE activo = TRUE 
+                    AND (nombre LIKE :keyword OR descripcion LIKE :keyword OR categoria LIKE :keyword) 
+                    ORDER BY nombre";
+            $stmt = $this->db->prepare($sql);
+            $searchTerm = '%' . $keyword . '%';
+            $stmt->execute([':keyword' => $searchTerm]);
+            $result = $stmt->fetchAll();
+            
+            // Return empty array if no results instead of false
+            return $result ? $result : [];
+        } catch (PDOException $e) {
+            error_log("Error en búsqueda de platos: " . $e->getMessage());
+            return [];
+        }
     }
     
     /**

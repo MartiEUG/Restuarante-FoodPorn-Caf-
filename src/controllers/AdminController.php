@@ -415,6 +415,76 @@ class AdminController {
     }
     
     /**
+     * Cambiar rol de usuario (quick toggle)
+     */
+    public function cambiarRolUsuario($id) {
+        AuthMiddleware::requireAdmin();
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect('/admin/usuarios');
+            return;
+        }
+        
+        // No permitir cambiar el rol del usuario actual
+        if ($id == $_SESSION['usuario_id']) {
+            setFlashMessage('error', 'No puedes cambiar tu propio rol');
+            redirect('/admin/usuarios');
+            return;
+        }
+        
+        $rol = sanitize($_POST['rol'] ?? 'usuario');
+        
+        // Validar rol
+        $rolesValidos = ['usuario', 'administrador'];
+        if (!in_array($rol, $rolesValidos)) {
+            setFlashMessage('error', 'Rol inválido');
+            redirect('/admin/usuarios');
+            return;
+        }
+        
+        $usuario = $this->usuarioModel->buscarPorId($id);
+        if (!$usuario) {
+            setFlashMessage('error', 'Usuario no encontrado');
+            redirect('/admin/usuarios');
+            return;
+        }
+        
+        // Actualizar solo el rol
+        if ($this->usuarioModel->actualizarRol($id, $rol)) {
+            setFlashMessage('success', 'Rol actualizado exitosamente');
+        } else {
+            setFlashMessage('error', 'Error al actualizar el rol');
+        }
+        
+        redirect('/admin/usuarios');
+    }
+    
+    /**
+     * Eliminar usuario
+     */
+    // This function is duplicated, so we can remove it
+    // public function eliminarUsuario($id) {
+    //     AuthMiddleware::requireAdmin();
+    //     
+    //     // No permitir eliminar el usuario actual
+    //     if ($id == $_SESSION['usuario_id']) {
+    //         setFlashMessage('error', 'No puedes eliminar tu propia cuenta');
+    //         redirect('/admin/usuarios');
+    //     }
+    //     
+    //     if ($this->usuarioModel->eliminar($id)) {
+    //         setFlashMessage('success', 'Usuario eliminado exitosamente');
+    //     } else {
+    //         setFlashMessage('error', 'Error al eliminar el usuario');
+    //     }
+    //     
+    //     redirect('/admin/usuarios');
+    // }
+    
+    // ========== GESTIÓN DE MESAS ==========
+    
+    
+    /**
      * Process image upload for dishes
      * Validates and saves dish images
      */

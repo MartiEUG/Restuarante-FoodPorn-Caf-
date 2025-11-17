@@ -51,11 +51,23 @@ class PlatoController {
         $keyword = isset($_GET['q']) ? sanitize($_GET['q']) : '';
         
         if (empty($keyword)) {
+            setFlashMessage('error', 'Por favor ingresa un término de búsqueda');
             redirect('/menu');
+            return;
         }
         
-        $platos = $this->platoModel->buscar($keyword);
-        
-        require_once SRC_PATH . '/views/platos/buscar.php';
+        try {
+            $platos = $this->platoModel->buscar($keyword);
+            
+            // Ensure $platos is always an array
+            if ($platos === false || $platos === null) {
+                $platos = [];
+            }
+            
+            require_once SRC_PATH . '/views/platos/buscar.php';
+        } catch (Exception $e) {
+            setFlashMessage('error', 'Error al realizar la búsqueda');
+            redirect('/menu');
+        }
     }
 }

@@ -153,36 +153,45 @@ class Mesa {
             }
             
             $placeholders = implode(',', array_fill(0, count($idsMesas), '?'));
-            $sql = "SELECT id, numero, capacidad, activa FROM mesas WHERE id IN ($placeholders)";
+            $sql = "SELECT id, numero, capacidad, activa, es_agrupada FROM mesas WHERE id IN ($placeholders)";
             $stmt = $this->db->prepare($sql);
             $stmt->execute($idsMesas);
             $mesasData = $stmt->fetchAll();
             
             if (count($mesasData) !== count($idsMesas)) {
-                $foundIds = array_column($mesasData, 'id');
-                $missingIds = array_diff($idsMesas, $foundIds);
-                throw new Exception('Las mesas con ID ' . implode(', ', $missingIds) . ' no existen');
+                throw new Exception('Algunas mesas no están disponibles o no existen');
             }
             
+            // Verificar que todas las mesas estén activas
             foreach ($mesasData as $mesa) {
                 if (!$mesa['activa']) {
                     throw new Exception('La mesa ' . $mesa['numero'] . ' no está activa');
                 }
+                if ($mesa['es_agrupada']) {
+                    throw new Exception('La mesa ' . $mesa['numero'] . ' ya está agrupada con otras mesas');
+                }
             }
             
-            $capacidadTotal = array_sum(array_column($mesasData, 'capacidad'));
-            $primeraMesa = $mesasData[0];
+            $capacidadTotal = 0;
+            foreach ($mesasData as $mesa) {
+                $capacidadTotal += (int)$mesa['capacidad'];
+            }
             
             if ($capacidadTotal <= 0) {
                 throw new Exception('Capacidad total inválida');
             }
             
-            error_log("[v0] Total capacity being set: " . $capacidadTotal);
+            $numerosMesas = array_column($mesasData, 'numero');
+            sort($numerosMesas); // Ordenar los números
+            $nombreGrupo = implode('+', $numerosMesas);
             
-            $sql = "UPDATE mesas SET capacidad = ?, es_agrupada = TRUE WHERE id = ?";
+            $primeraMesa = $mesasData[0];
+            
+            $sql = "UPDATE mesas SET capacidad = ?, numero = ?, es_agrupada = TRUE WHERE id = ?";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$capacidadTotal, $primeraMesa['id']]);
+            $stmt->execute([$capacidadTotal, $nombreGrupo, $primeraMesa['id']]);
             
+            // Desactivar las otras mesas del grupo
             $idsADesactivar = array_slice($idsMesas, 1);
             if (!empty($idsADesactivar)) {
                 $placeholders = implode(',', array_fill(0, count($idsADesactivar), '?'));
@@ -320,5 +329,31 @@ class Mesa {
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll();
+    }
+    
+    /**
+     * Validar que las mesas seleccionadas tengan capacidad suficiente
+     */
+    public function validarCapacidadMesas($idsMesas, $numPersonas) {
+        if (empty($idsMesas)) {
+            return ['valido' => false, 'mensaje' => 'No se han seleccionado mesas'];
+        }
+        
+        $placeholders = implode(',', array_fill(0, count($idsMesas), '?'));
+        $sql = "SELECT SUM(capacidad) as capacidad_total FROM mesas WHERE id IN ($placeholders) AND activa = TRUE";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($idsMesas);
+        $result = $stmt->fetch();
+        
+        $capacidadTotal = (int)$result['capacidad_total'];
+        
+        if ($capacidadTotal < $numPersonas) {
+            return [
+                'valido' => false, 
+                'mensaje' => "La capacidad total de las mesas seleccionadas ($capacidadTotal personas) es insuficiente para $numPersonas personas"
+            ];
+        }
+        
+        return ['valido' => true, 'capacidad_total' => $capacidadTotal];
     }
 }

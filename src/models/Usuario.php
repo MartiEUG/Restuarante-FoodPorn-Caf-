@@ -125,6 +125,23 @@ class Usuario {
     }
     
     /**
+     * Actualizar solo el rol de usuario
+     */
+    public function actualizarRol($id, $rol) {
+        try {
+            $sql = "UPDATE usuarios SET rol = :rol WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            
+            return $stmt->execute([
+                ':id' => $id,
+                ':rol' => $rol
+            ]);
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+    
+    /**
      * Eliminar usuario
      */
     public function eliminar($id) {

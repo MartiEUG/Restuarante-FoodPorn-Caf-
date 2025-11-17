@@ -11,6 +11,8 @@ define('PUBLIC_PATH', ROOT_PATH . '/public');
 // Cargar configuración
 require_once SRC_PATH . '/config/config.php';
 require_once SRC_PATH . '/config/database.php';
+require_once SRC_PATH . '/services/EmailService.php';
+
 
 // Cargar helpers
 require_once SRC_PATH . '/utils/helpers.php';
